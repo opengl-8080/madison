@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="base" stylesheets="@common.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="madison.controller.RegisterTrackingAimRecordController">
+   <center>
+      <VBox fx:id="formVBox">
+</VBox>
+   </center>
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onClickRegisterButton" styleClass="register-button" text="登録" />
+         </center>
+      </BorderPane>
+   </bottom>
+</BorderPane>

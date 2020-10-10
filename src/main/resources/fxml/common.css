@@ -1,0 +1,20 @@
+.error {
+    -fx-effect: dropshadow(gaussian, red, 10, 0.0, 0, 0); 
+}
+
+.base {
+     -fx-padding: 10px;
+}
+
+.round-form {
+    -fx-padding: 10 20;
+}
+
+.round-form .label {
+    -fx-font-size: 15pt;
+}
+
+.register-button {
+    -fx-font-size: 15pt;
+    -fx-pref-width: 150px;
+}

@@ -11,7 +11,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import madison.domain.tracking.TrackingAimAccuracy;
 import madison.domain.tracking.TrackingAimDamageEff;
-import madison.domain.tracking.TrackingAimRecordDate;
 import madison.domain.tracking.TrackingAimRound;
 import madison.domain.tracking.TrackingAimScore;
 
@@ -54,11 +53,10 @@ public class TrackingAimRoundFormController implements Initializable {
     }
 
     public TrackingAimRound getTrackingAimRound() {
-        final TrackingAimRecordDate date = TrackingAimRecordDate.now();
         final TrackingAimScore score = TrackingAimScore.parse(scoreTextField.getText());
         final TrackingAimAccuracy accuracy = TrackingAimAccuracy.parse(accuracyTextField.getText());
         final TrackingAimDamageEff damageEff = TrackingAimDamageEff.parse(damageEffTextField.getText());
-        return TrackingAimRound.of(date, score, accuracy, damageEff);
+        return TrackingAimRound.of(score, accuracy, damageEff);
     }
 
     public void clear() {

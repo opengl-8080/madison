@@ -15,14 +15,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CsvTrackingAimRecordRepository implements TrackingAimRecordRepository {
-    private final CsvFile<TrackingAimRound> csv;
+    private final CsvFile<CsvTrackingAimRound> csv;
     private final List<TrackingAimRecord> cache = new ArrayList<>();
 
     public CsvTrackingAimRecordRepository(Path file) {
-        this.csv = CsvFile.<TrackingAimRound>builder(file)
+        this.csv = CsvFile.<CsvTrackingAimRound>builder(file)
                         .delimiter("\t")
                         .formatter(this::format)
                         .parser(this::parse)
@@ -47,40 +46,55 @@ public class CsvTrackingAimRecordRepository implements TrackingAimRecordReposito
         }
 
         final Map<TrackingAimRecordDate, List<TrackingAimRound>> records = new HashMap<>();
-        for (TrackingAimRound round : csv.load()) {
-            final List<TrackingAimRound> rounds = records.computeIfAbsent(round.date(), key -> new ArrayList<>());
-            rounds.add(round);
+
+        for (CsvTrackingAimRound round : csv.load()) {
+            final List<TrackingAimRound> rounds = records.computeIfAbsent(round.date, key -> new ArrayList<>());
+            rounds.add(TrackingAimRound.of(round.score, round.accuracy, round.damageEff));
         }
 
         cache.clear();
         
-        records.values().forEach(rounds -> cache.add(TrackingAimRecord.of(rounds)));
+        records.forEach((date, rounds) -> cache.add(TrackingAimRecord.of(date, rounds)));
         
         cache.sort(Comparator.comparing(TrackingAimRecord::date));
     }
 
     private void save() {
-        final List<TrackingAimRound> rounds = cache.stream()
-                .flatMap(record -> record.rounds().stream())
-                .collect(Collectors.toList());
+        List<CsvTrackingAimRound> csvRounds = new ArrayList<>();
         
-        csv.write(rounds);
+        for (TrackingAimRecord record : cache) {
+            for (TrackingAimRound round : record.rounds()) {
+                CsvTrackingAimRound csvRound = new CsvTrackingAimRound();
+
+                csvRound.date = record.date();
+                csvRound.score = round.score();
+                csvRound.accuracy = round.accuracy();
+                csvRound.damageEff = round.damageEff();
+                
+                csvRounds.add(csvRound);
+            }
+        }
+        
+        csv.write(csvRounds);
     }
 
-    private List<String> format(TrackingAimRound round) {
+    private List<String> format(CsvTrackingAimRound round) {
         return List.of(
-            round.date().value().toString(),
-            String.valueOf(round.score().value()),
-            String.valueOf(round.accuracy().value()),
-            String.valueOf(round.damageEff().value())
+            round.date.value().toString(),
+            String.valueOf(round.score.value()),
+            String.valueOf(round.accuracy.value()),
+            String.valueOf(round.damageEff.value())
         );
     }
     
-    private TrackingAimRound parse(List<String> elements) {
-        final TrackingAimRecordDate date = TrackingAimRecordDate.parse(elements.get(0));
-        final TrackingAimScore score = TrackingAimScore.parse(elements.get(1));
-        final TrackingAimAccuracy accuracy = TrackingAimAccuracy.parse(elements.get(2));
-        final TrackingAimDamageEff damageEff = TrackingAimDamageEff.parse(elements.get(3));
-        return TrackingAimRound.of(date, score, accuracy, damageEff);
+    private CsvTrackingAimRound parse(List<String> elements) {
+        CsvTrackingAimRound round = new CsvTrackingAimRound();
+
+        round.date = TrackingAimRecordDate.parse(elements.get(0));
+        round.score = TrackingAimScore.parse(elements.get(1));
+        round.accuracy = TrackingAimAccuracy.parse(elements.get(2));
+        round.damageEff = TrackingAimDamageEff.parse(elements.get(3));
+        
+        return round;
     }
 }

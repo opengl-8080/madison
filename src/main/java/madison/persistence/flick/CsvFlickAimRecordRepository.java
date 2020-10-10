@@ -14,14 +14,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
-    private final CsvFile<FlickAimRound> csv;
+    private final CsvFile<CsvFlickAimRound> csv;
     private final List<FlickAimRecord> cache = new ArrayList<>();
 
     public CsvFlickAimRecordRepository(Path file) {
-        csv = CsvFile.<FlickAimRound>builder(file)
+        csv = CsvFile.<CsvFlickAimRound>builder(file)
                     .delimiter("\t")
                     .formatter(this::format)
                     .parser(this::parse)
@@ -47,47 +46,51 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
         
         final Map<FlickAimRecordDate, List<FlickAimRound>> records = new HashMap<>();
 
-        for (FlickAimRound round : csv.load()) {
-            final List<FlickAimRound> rounds = records.computeIfAbsent(round.date(), key -> new ArrayList<>());
-            rounds.add(round);
+        for (CsvFlickAimRound round : csv.load()) {
+            final List<FlickAimRound> rounds = records.computeIfAbsent(round.date, key -> new ArrayList<>());
+            rounds.add(FlickAimRound.of(round.score, round.accuracy));
         }
         
         this.cache.clear();
         
-        records.values().forEach(rounds -> this.cache.add(FlickAimRecord.of(rounds)));
+        records.forEach((date, rounds) -> this.cache.add(FlickAimRecord.of(date, rounds)));
 
         this.cache.sort(Comparator.comparing(FlickAimRecord::date));
     }
     
     private void save() {
-        final List<FlickAimRound> rounds = cache.stream()
-                .flatMap(record -> record.rounds().stream())
-                .collect(Collectors.toList());
+        List<CsvFlickAimRound> csvRounds = new ArrayList<>();
         
-        csv.write(rounds);
+        for (FlickAimRecord record : cache) {
+            for (FlickAimRound round : record.rounds()) {
+                CsvFlickAimRound csvRound = new CsvFlickAimRound();
+                
+                csvRound.date = record.date();
+                csvRound.score = round.score();
+                csvRound.accuracy = round.accuracy();
+
+                csvRounds.add(csvRound);
+            }
+        }
+        
+        csv.write(csvRounds);
     }
     
-    private String toCsvRecord(FlickAimRecordDate date, FlickAimRound round) {
-        List<String> elements = List.of(
-            date.value().toString(),
-            String.valueOf(round.score().value()),
-            String.valueOf(round.accuracy().value())
-        );
-        return String.join(",", elements);
-    }
-    
-    private List<String> format(FlickAimRound round) {
+    private List<String> format(CsvFlickAimRound round) {
         return List.of(
-            round.date().value().toString(),
-            String.valueOf(round.score().value()),
-            String.valueOf(round.accuracy().value())
+            round.date.value().toString(),
+            String.valueOf(round.score.value()),
+            String.valueOf(round.accuracy.value())
         );
     }
     
-    private FlickAimRound parse(List<String> elements) {
-        final FlickAimRecordDate date = FlickAimRecordDate.parse(elements.get(0));
-        final FlickAimScore score = FlickAimScore.parse(elements.get(1));
-        final FlickAimAccuracy accuracy = FlickAimAccuracy.parse(elements.get(2));
-        return FlickAimRound.of(date, score, accuracy);
+    private CsvFlickAimRound parse(List<String> elements) {
+        final CsvFlickAimRound round = new CsvFlickAimRound();
+
+        round.date = FlickAimRecordDate.parse(elements.get(0));
+        round.score = FlickAimScore.parse(elements.get(1));
+        round.accuracy = FlickAimAccuracy.parse(elements.get(2));
+
+        return round;
     }
 }

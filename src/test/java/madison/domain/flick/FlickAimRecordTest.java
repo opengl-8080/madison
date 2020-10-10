@@ -15,19 +15,19 @@ class FlickAimRecordTest {
     void testCalculateStatistic() {
         final FlickAimRecordDate date = FlickAimRecordDate.of(LocalDate.of(2020, 10, 10));
 
-        final FlickAimRound median = round(date, 6, 10);
-        final FlickAimRecord sut = FlickAimRecord.of(List.of(
-            round(date, 1, 10),
-            round(date, 2, 10),
-            round(date, 3, 10),
-            round(date, 4, 10),
-            round(date, 5, 10),
+        final FlickAimRound median = round(6, 10);
+        final FlickAimRecord sut = FlickAimRecord.of(date, List.of(
+            round(1, 10),
+            round(2, 10),
+            round(3, 10),
+            round(4, 10),
+            round(5, 10),
             median,
-            round(date, 7, 10),
-            round(date, 8, 10),
-            round(date, 9, 10),
-            round(date, 10, 10),
-            round(date, 11, 10)
+            round(7, 10),
+            round(8, 10),
+            round(9, 10),
+            round(10, 10),
+            round(11, 10)
         ));
 
         FlickAimStatistic statistic = sut.calculateStatistic();
@@ -37,7 +37,7 @@ class FlickAimRecordTest {
         assertThat(statistic.totalScore()).isEqualTo(FlickAimTotalScore.of(66));
     }
     
-    private FlickAimRound round(FlickAimRecordDate date, double score, double accuracy) {
-        return FlickAimRound.of(date, FlickAimScore.of(score), FlickAimAccuracy.of(accuracy));
+    private FlickAimRound round(double score, double accuracy) {
+        return FlickAimRound.of(FlickAimScore.of(score), FlickAimAccuracy.of(accuracy));
     }
 }

@@ -7,20 +7,22 @@ import java.util.Objects;
 
 @Entity
 public class TrackingAimStatistic {
+    private final TrackingAimRecordDate date;
     private final TrackingAimMedianRound medianRound;
     private final TrackingAimTotalScore totalScore;
 
-    public static TrackingAimStatistic of(TrackingAimMedianRound medianRound, TrackingAimTotalScore totalScore) {
-        return new TrackingAimStatistic(medianRound, totalScore);
+    public static TrackingAimStatistic of(TrackingAimRecordDate date, TrackingAimMedianRound medianRound, TrackingAimTotalScore totalScore) {
+        return new TrackingAimStatistic(date, medianRound, totalScore);
     }
     
-    private TrackingAimStatistic(TrackingAimMedianRound medianRound, TrackingAimTotalScore totalScore) {
+    private TrackingAimStatistic(TrackingAimRecordDate date, TrackingAimMedianRound medianRound, TrackingAimTotalScore totalScore) {
+        this.date = Objects.requireNonNull(date);
         this.medianRound = Objects.requireNonNull(medianRound);
         this.totalScore = Objects.requireNonNull(totalScore);
     }
 
     public TrackingAimRecordDate date() {
-        return medianRound.value().date();
+        return date;
     }
 
     public TrackingAimMedianRound medianRound() {

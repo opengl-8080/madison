@@ -161,6 +161,15 @@ public class MainController implements InitializeStage, Initializable {
 
         refreshTrackingAimRecordTable();
     }
+    
+    @FXML
+    public void onClickShowChart() {
+        final Fxml<ChartController, Parent> fxml = Fxml.load(ChartController.class);
+        FxWindow.newWindow(fxml)
+                .title("Chart")
+                .modality(stage, Modality.NONE)
+                .show();
+    }
 
     @Override
     public void setStage(Stage stage) {

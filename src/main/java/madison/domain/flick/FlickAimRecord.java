@@ -41,9 +41,13 @@ public class FlickAimRecord {
     }
 
     public FlickAimStatistic calculateStatistic() {
-        return FlickAimStatistic.of(date, findMedianRound(), calculateTotalScore());
+        return FlickAimStatistic.of(
+            date,
+            findMedianRound(),
+            calculateTotalScore()
+        );
     }
-    
+
     private FlickAimMedianRound findMedianRound() {
         final List<FlickAimRound> copy = new ArrayList<>(rounds);
         copy.sort(Comparator.comparingDouble(round -> round.score().value()));

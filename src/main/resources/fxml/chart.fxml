@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" styleClass="base" stylesheets="@common.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="madison.controller.ChartController">
+   <children>
+      <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
+         <children>
+            <LineChart fx:id="flickAimMedianChart" createSymbols="false" title="Flick Aim (Median)">
+              <xAxis>
+                <CategoryAxis label="date" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis fx:id="flickAimMedianYAxis" label="score" side="LEFT" />
+              </yAxis>
+            </LineChart>
+            <LineChart fx:id="flickAimTotalScoreChart" createSymbols="false" title="Flick Aim (Total)">
+              <xAxis>
+                <CategoryAxis label="date" side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis fx:id="flickAimTotalYAxis" label="total score" side="LEFT" />
+              </yAxis>
+            </LineChart>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+          <children>
+                <LineChart fx:id="trackingAimMedianChart" createSymbols="false" title="Tracking Aim (Median)">
+                    <xAxis>
+                        <CategoryAxis label="date" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="trackingAimMedianYAxis" label="score" side="LEFT" />
+                    </yAxis>
+                </LineChart>
+                <LineChart fx:id="trackingAimTotalScoreChart" createSymbols="false" title="Tracking Aim (Total)">
+                    <xAxis>
+                        <CategoryAxis label="date" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="trackingAimTotalYAxis" label="total score" side="LEFT" />
+                    </yAxis>
+                </LineChart>
+          </children>
+      </HBox>
+   </children>
+</VBox>

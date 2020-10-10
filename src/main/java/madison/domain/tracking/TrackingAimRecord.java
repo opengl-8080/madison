@@ -1,8 +1,16 @@
 package madison.domain.tracking;
 
+import madison.domain.Entity;
+import madison.domain.tracking.statistic.TrackingAimMedianRound;
+import madison.domain.tracking.statistic.TrackingAimStatistic;
+import madison.domain.tracking.statistic.TrackingAimTotalScore;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class TrackingAimRecord {
     private final TrackingAimRecordDate date;
     private final List<TrackingAimRound> rounds;
@@ -32,17 +40,19 @@ public class TrackingAimRecord {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrackingAimRecord that = (TrackingAimRecord) o;
-        return date.equals(that.date) &&
-                rounds.equals(that.rounds);
+    public TrackingAimStatistic calculateStatistic() {
+        return TrackingAimStatistic.of(date, findMedianRound(), calculateTotalScore());
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(date, rounds);
+    
+    private TrackingAimMedianRound findMedianRound() {
+        final List<TrackingAimRound> copy = new ArrayList<>(rounds);
+        copy.sort(Comparator.comparingDouble(round -> round.score().value()));
+        final TrackingAimRound median = copy.get(copy.size() / 2);
+        return TrackingAimMedianRound.of(median);
+    }
+    
+    private TrackingAimTotalScore calculateTotalScore() {
+        final double total = rounds.stream().mapToDouble(round -> round.score().value()).sum();
+        return TrackingAimTotalScore.of(total);
     }
 }

@@ -1,22 +1,18 @@
-package madison.domain.tracking;
+package madison.domain.tracking.statistic;
 
 import madison.domain.ValueObject;
 
 import java.util.Objects;
 
 @ValueObject
-public class TrackingAimScore {
+public class TrackingAimTotalScore {
     private final double value;
 
-    public static TrackingAimScore of(double value) {
-        return new TrackingAimScore(value);
-    }
-
-    public static TrackingAimScore parse(String text) {
-        return of(Double.parseDouble(text));
+    public static TrackingAimTotalScore of(double value) {
+        return new TrackingAimTotalScore(value);
     }
     
-    private TrackingAimScore(double value) {
+    private TrackingAimTotalScore(double value) {
         this.value = value;
     }
 
@@ -26,7 +22,7 @@ public class TrackingAimScore {
 
     @Override
     public String toString() {
-        return "TrackingAimScore{" +
+        return "TrackingAimTotalScore{" +
                 "value=" + value +
                 '}';
     }
@@ -35,7 +31,7 @@ public class TrackingAimScore {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TrackingAimScore that = (TrackingAimScore) o;
+        TrackingAimTotalScore that = (TrackingAimTotalScore) o;
         return Double.compare(that.value, value) == 0;
     }
 

@@ -1,9 +1,12 @@
 package madison.domain.flick;
 
+import madison.domain.ValueObject;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class FlickAimRecordDate {
+@ValueObject
+public class FlickAimRecordDate implements Comparable<FlickAimRecordDate> {
     private final LocalDate value;
     
     public static FlickAimRecordDate now() {
@@ -44,5 +47,10 @@ public class FlickAimRecordDate {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public int compareTo(FlickAimRecordDate other) {
+        return value.compareTo(other.value);
     }
 }

@@ -18,3 +18,16 @@
     -fx-font-size: 15pt;
     -fx-pref-width: 150px;
 }
+
+.record-table .align-right {
+    -fx-alignment: CENTER-RIGHT;
+}
+
+.record-table {
+    -fx-font-size: 11pt;
+}
+
+.title {
+    -fx-font-size: 15pt;
+    -fx-font-weight: bold;
+}

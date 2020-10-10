@@ -15,10 +15,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
     private final Path file;
@@ -34,7 +36,15 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
         cache.put(record.date(), record);
         save();
     }
-    
+
+    @Override
+    public List<FlickAimRecord> findAllOrderByDate() {
+        return cache.values()
+                .stream()
+                .sorted(Comparator.comparing(FlickAimRecord::date))
+                .collect(Collectors.toList());
+    }
+
     private void load() {
         if (!(Files.exists(file) && Files.isRegularFile(file))) {
             return;

@@ -1,7 +1,10 @@
 package madison.domain.tracking;
 
+import madison.domain.ValueObject;
+
 import java.util.Objects;
 
+@ValueObject
 public class TrackingAimDamageEff {
     private final double value;
 

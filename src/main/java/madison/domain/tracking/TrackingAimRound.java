@@ -1,7 +1,10 @@
 package madison.domain.tracking;
 
+import madison.domain.Entity;
+
 import java.util.Objects;
 
+@Entity
 public class TrackingAimRound {
     private final TrackingAimScore score;
     private final TrackingAimAccuracy accuracy;
@@ -36,20 +39,5 @@ public class TrackingAimRound {
                 ", accuracy=" + accuracy +
                 ", damageEff=" + damageEff +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TrackingAimRound that = (TrackingAimRound) o;
-        return score.equals(that.score) &&
-                accuracy.equals(that.accuracy) &&
-                damageEff.equals(that.damageEff);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(score, accuracy, damageEff);
     }
 }

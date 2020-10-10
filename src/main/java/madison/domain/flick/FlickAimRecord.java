@@ -1,8 +1,16 @@
 package madison.domain.flick;
 
+import madison.domain.Entity;
+import madison.domain.flick.statistic.FlickAimMedianRound;
+import madison.domain.flick.statistic.FlickAimStatistic;
+import madison.domain.flick.statistic.FlickAimTotalScore;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class FlickAimRecord {
     private final FlickAimRecordDate date;
     private final List<FlickAimRound> rounds;
@@ -25,24 +33,26 @@ public class FlickAimRecord {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FlickAimRecord that = (FlickAimRecord) o;
-        return Objects.equals(date, that.date) &&
-                Objects.equals(rounds, that.rounds);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(date, rounds);
-    }
-
-    @Override
     public String toString() {
         return "FlickAimRecords{" +
                 "date=" + date +
                 ", rounds=" + rounds +
                 '}';
+    }
+
+    public FlickAimStatistic calculateStatistic() {
+        return FlickAimStatistic.of(date, findMedianRound(), calculateTotalScore());
+    }
+    
+    private FlickAimMedianRound findMedianRound() {
+        final List<FlickAimRound> copy = new ArrayList<>(rounds);
+        copy.sort(Comparator.comparingDouble(round -> round.score().value()));
+        final FlickAimRound median = copy.get(copy.size() / 2);
+        return FlickAimMedianRound.of(median);
+    }
+    
+    private FlickAimTotalScore calculateTotalScore() {
+        final double total = rounds.stream().mapToDouble(round -> round.score().value()).sum();
+        return FlickAimTotalScore.of(total);
     }
 }

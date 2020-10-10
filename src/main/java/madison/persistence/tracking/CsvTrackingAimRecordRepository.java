@@ -16,10 +16,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CsvTrackingAimRecordRepository implements TrackingAimRecordRepository {
     private final Path file;
@@ -34,6 +36,14 @@ public class CsvTrackingAimRecordRepository implements TrackingAimRecordReposito
     public void register(TrackingAimRecord record) {
         cache.put(record.date(), record);
         save();
+    }
+
+    @Override
+    public List<TrackingAimRecord> findAllOrderByDate() {
+        return cache.values()
+                .stream()
+                .sorted(Comparator.comparing(TrackingAimRecord::date))
+                .collect(Collectors.toList());
     }
 
     private void load() {

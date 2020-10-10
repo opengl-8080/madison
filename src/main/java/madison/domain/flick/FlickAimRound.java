@@ -1,7 +1,10 @@
 package madison.domain.flick;
 
+import madison.domain.Entity;
+
 import java.util.Objects;
 
+@Entity
 public class FlickAimRound {
     private final FlickAimScore score;
     private final FlickAimAccuracy accuracy;
@@ -21,20 +24,6 @@ public class FlickAimRound {
 
     public FlickAimAccuracy accuracy() {
         return accuracy;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FlickAimRound that = (FlickAimRound) o;
-        return Objects.equals(score, that.score) &&
-                Objects.equals(accuracy, that.accuracy);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(score, accuracy);
     }
 
     @Override

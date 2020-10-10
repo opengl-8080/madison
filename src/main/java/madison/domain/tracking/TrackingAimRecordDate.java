@@ -1,9 +1,12 @@
 package madison.domain.tracking;
 
+import madison.domain.ValueObject;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class TrackingAimRecordDate {
+@ValueObject
+public class TrackingAimRecordDate implements Comparable<TrackingAimRecordDate> {
     private final LocalDate value;
 
     public static TrackingAimRecordDate of(LocalDate value) {
@@ -44,5 +47,10 @@ public class TrackingAimRecordDate {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public int compareTo(TrackingAimRecordDate other) {
+        return value.compareTo(other.value);
     }
 }

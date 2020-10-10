@@ -1,7 +1,10 @@
 package madison.domain.flick;
 
+import madison.domain.ValueObject;
+
 import java.util.Objects;
 
+@ValueObject
 public class FlickAimAccuracy {
     private final double value;
     

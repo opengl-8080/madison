@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import madison.domain.flick.FlickAimAccuracy;
+import madison.domain.flick.FlickAimRecordDate;
 import madison.domain.flick.FlickAimRound;
 import madison.domain.flick.FlickAimScore;
 
@@ -49,9 +50,10 @@ public class FlickAimRoundFormController implements Initializable {
     }
     
     public FlickAimRound getFlickAimRound() {
+        final FlickAimRecordDate date = FlickAimRecordDate.now();
         final FlickAimScore score = FlickAimScore.parse(scoreTextField.getText());
         final FlickAimAccuracy accuracy = FlickAimAccuracy.parse(accuracyTextField.getText());
-        return FlickAimRound.of(score, accuracy);
+        return FlickAimRound.of(date, score, accuracy);
     }
     
     public void clear() {

@@ -12,20 +12,29 @@ import java.util.Objects;
 
 @Entity
 public class TrackingAimRecord {
-    private final TrackingAimRecordDate date;
     private final List<TrackingAimRound> rounds;
 
-    public static TrackingAimRecord of(TrackingAimRecordDate date, List<TrackingAimRound> rounds) {
-        return new TrackingAimRecord(date, rounds);
+    public static TrackingAimRecord of(List<TrackingAimRound> rounds) {
+        return new TrackingAimRecord(rounds);
     }
     
-    private TrackingAimRecord(TrackingAimRecordDate date, List<TrackingAimRound> rounds) {
-        this.date = Objects.requireNonNull(date);
+    private TrackingAimRecord(List<TrackingAimRound> rounds) {
         this.rounds = Objects.requireNonNull(rounds);
+        checkDateAreNotDuplicated(rounds);
+    }
+    
+    private void checkDateAreNotDuplicated(List<TrackingAimRound> rounds) {
+        TrackingAimRecordDate date = null;
+        for (TrackingAimRound round : rounds) {
+            if (date != null && !date.equals(round.date())) {
+                throw new IllegalArgumentException("日付が一致していないラウンドが含まれています. date=" + round.date());
+            }
+            date = round.date();
+        }
     }
 
     public TrackingAimRecordDate date() {
-        return date;
+        return rounds.get(0).date();
     }
 
     public List<TrackingAimRound> rounds() {
@@ -35,13 +44,12 @@ public class TrackingAimRecord {
     @Override
     public String toString() {
         return "TrackingAimRecord{" +
-                "date=" + date +
-                ", rounds=" + rounds +
+                "rounds=" + rounds +
                 '}';
     }
 
     public TrackingAimStatistic calculateStatistic() {
-        return TrackingAimStatistic.of(date, findMedianRound(), calculateTotalScore());
+        return TrackingAimStatistic.of(findMedianRound(), calculateTotalScore());
     }
     
     private TrackingAimMedianRound findMedianRound() {

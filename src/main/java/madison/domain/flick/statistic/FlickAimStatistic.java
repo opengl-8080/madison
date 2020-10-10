@@ -7,22 +7,20 @@ import java.util.Objects;
 
 @Entity
 public class FlickAimStatistic {
-    private final FlickAimRecordDate date;
     private final FlickAimMedianRound medianRound;
     private final FlickAimTotalScore totalScore;
 
-    public static FlickAimStatistic of(FlickAimRecordDate date, FlickAimMedianRound medianRound, FlickAimTotalScore totalScore) {
-        return new FlickAimStatistic(date, medianRound, totalScore);
+    public static FlickAimStatistic of(FlickAimMedianRound medianRound, FlickAimTotalScore totalScore) {
+        return new FlickAimStatistic(medianRound, totalScore);
     }
     
-    private FlickAimStatistic(FlickAimRecordDate date, FlickAimMedianRound medianRound, FlickAimTotalScore totalScore) {
-        this.date = Objects.requireNonNull(date);
+    private FlickAimStatistic(FlickAimMedianRound medianRound, FlickAimTotalScore totalScore) {
         this.medianRound = Objects.requireNonNull(medianRound);
         this.totalScore = Objects.requireNonNull(totalScore);
     }
 
     public FlickAimRecordDate date() {
-        return date;
+        return medianRound.value().date();
     }
 
     public FlickAimMedianRound medianRound() {
@@ -36,8 +34,7 @@ public class FlickAimStatistic {
     @Override
     public String toString() {
         return "FlickAimStatistic{" +
-                "date=" + date +
-                ", medianRound=" + medianRound +
+                "medianRound=" + medianRound +
                 ", totalScore=" + totalScore +
                 '}';
     }

@@ -6,16 +6,22 @@ import java.util.Objects;
 
 @Entity
 public class FlickAimRound {
+    private final FlickAimRecordDate date;
     private final FlickAimScore score;
     private final FlickAimAccuracy accuracy;
     
-    public static FlickAimRound of(FlickAimScore score, FlickAimAccuracy accuracy) {
-        return new FlickAimRound(score, accuracy);
+    public static FlickAimRound of(FlickAimRecordDate date, FlickAimScore score, FlickAimAccuracy accuracy) {
+        return new FlickAimRound(date, score, accuracy);
     }
 
-    private FlickAimRound(FlickAimScore score, FlickAimAccuracy accuracy) {
+    private FlickAimRound(FlickAimRecordDate date, FlickAimScore score, FlickAimAccuracy accuracy) {
+        this.date = Objects.requireNonNull(date);
         this.score = Objects.requireNonNull(score);
         this.accuracy = Objects.requireNonNull(accuracy);
+    }
+
+    public FlickAimRecordDate date() {
+        return date;
     }
 
     public FlickAimScore score() {
@@ -28,8 +34,9 @@ public class FlickAimRound {
 
     @Override
     public String toString() {
-        return "FlickAimRecord{" +
-                "score=" + score +
+        return "FlickAimRound{" +
+                "date=" + date +
+                ", score=" + score +
                 ", accuracy=" + accuracy +
                 '}';
     }

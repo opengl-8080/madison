@@ -12,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import madison.domain.tracking.TrackingAimRecord;
-import madison.domain.tracking.TrackingAimRecordDate;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.TrackingAimRound;
 import madison.trial.Dialog;
@@ -58,9 +57,8 @@ public class RegisterTrackingAimRecordController implements Initializable, Initi
             return;
         }
 
-        final TrackingAimRecordDate date = TrackingAimRecordDate.now();
         final List<TrackingAimRound> rounds = formControllers.stream().map(TrackingAimRoundFormController::getTrackingAimRound).collect(Collectors.toList());
-        final TrackingAimRecord record = TrackingAimRecord.of(date, rounds);
+        final TrackingAimRecord record = TrackingAimRecord.of(rounds);
 
         final TrackingAimRecordRepository repository = ObjectContainer.getInstance().get(TrackingAimRecordRepository.class);
         repository.register(record);

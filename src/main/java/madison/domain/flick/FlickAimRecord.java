@@ -12,20 +12,29 @@ import java.util.Objects;
 
 @Entity
 public class FlickAimRecord {
-    private final FlickAimRecordDate date;
     private final List<FlickAimRound> rounds;
 
-    public static FlickAimRecord of(FlickAimRecordDate date, List<FlickAimRound> records) {
-        return new FlickAimRecord(date, records);
+    public static FlickAimRecord of(List<FlickAimRound> records) {
+        return new FlickAimRecord(records);
     }
     
-    private FlickAimRecord(FlickAimRecordDate date, List<FlickAimRound> rounds) {
-        this.date = Objects.requireNonNull(date);
+    private FlickAimRecord(List<FlickAimRound> rounds) {
         this.rounds = Objects.requireNonNull(rounds);
+        checkDateAreNotDuplicated(rounds);
+    }
+
+    private void checkDateAreNotDuplicated(List<FlickAimRound> rounds) {
+        FlickAimRecordDate date = null;
+        for (FlickAimRound round : rounds) {
+            if (date != null && !date.equals(round.date())) {
+                throw new IllegalArgumentException("日付が一致していないラウンドが含まれています. date=" + round.date());
+            }
+            date = round.date();
+        }
     }
 
     public FlickAimRecordDate date() {
-        return date;
+        return rounds.get(0).date();
     }
 
     public List<FlickAimRound> rounds() {
@@ -34,14 +43,13 @@ public class FlickAimRecord {
 
     @Override
     public String toString() {
-        return "FlickAimRecords{" +
-                "date=" + date +
-                ", rounds=" + rounds +
+        return "FlickAimRecord{" +
+                "rounds=" + rounds +
                 '}';
     }
 
     public FlickAimStatistic calculateStatistic() {
-        return FlickAimStatistic.of(date, findMedianRound(), calculateTotalScore());
+        return FlickAimStatistic.of(findMedianRound(), calculateTotalScore());
     }
     
     private FlickAimMedianRound findMedianRound() {

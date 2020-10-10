@@ -6,18 +6,24 @@ import java.util.Objects;
 
 @Entity
 public class TrackingAimRound {
+    private final TrackingAimRecordDate date;
     private final TrackingAimScore score;
     private final TrackingAimAccuracy accuracy;
     private final TrackingAimDamageEff damageEff;
 
-    public static TrackingAimRound of(TrackingAimScore score, TrackingAimAccuracy accuracy, TrackingAimDamageEff damageEff) {
-        return new TrackingAimRound(score, accuracy, damageEff);
+    public static TrackingAimRound of(TrackingAimRecordDate date, TrackingAimScore score, TrackingAimAccuracy accuracy, TrackingAimDamageEff damageEff) {
+        return new TrackingAimRound(date, score, accuracy, damageEff);
     }
     
-    private TrackingAimRound(TrackingAimScore score, TrackingAimAccuracy accuracy, TrackingAimDamageEff damageEff) {
+    private TrackingAimRound(TrackingAimRecordDate date, TrackingAimScore score, TrackingAimAccuracy accuracy, TrackingAimDamageEff damageEff) {
+        this.date = Objects.requireNonNull(date);
         this.score = Objects.requireNonNull(score);
         this.accuracy = Objects.requireNonNull(accuracy);
         this.damageEff = Objects.requireNonNull(damageEff);
+    }
+
+    public TrackingAimRecordDate date() {
+        return date;
     }
 
     public TrackingAimScore score() {
@@ -35,7 +41,8 @@ public class TrackingAimRound {
     @Override
     public String toString() {
         return "TrackingAimRound{" +
-                "score=" + score +
+                "date=" + date +
+                ", score=" + score +
                 ", accuracy=" + accuracy +
                 ", damageEff=" + damageEff +
                 '}';

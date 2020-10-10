@@ -7,27 +7,26 @@ import madison.domain.tracking.TrackingAimRecordDate;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.TrackingAimRound;
 import madison.domain.tracking.TrackingAimScore;
+import madison.trial.csv.CsvFile;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CsvTrackingAimRecordRepository implements TrackingAimRecordRepository {
-    private final Path file;
+    private final CsvFile<TrackingAimRound> csv;
     private final List<TrackingAimRecord> cache = new ArrayList<>();
 
     public CsvTrackingAimRecordRepository(Path file) {
-        this.file = Objects.requireNonNull(file);
+        this.csv = CsvFile.<TrackingAimRound>builder(file)
+                        .delimiter("\t")
+                        .formatter(this::format)
+                        .parser(this::parse)
+                        .build();
         load();
     }
 
@@ -43,58 +42,45 @@ public class CsvTrackingAimRecordRepository implements TrackingAimRecordReposito
     }
 
     private void load() {
-        if (!(Files.exists(file) && Files.isRegularFile(file))) {
+        if (!csv.exists()) {
             return;
         }
 
-        try {
-            final Map<TrackingAimRecordDate, List<TrackingAimRound>> records = new HashMap<>();
-            Files.lines(file, StandardCharsets.UTF_8)
-                    .forEach(line -> {
-                        final String[] elements = line.split(",");
-
-                        final TrackingAimScore score = TrackingAimScore.parse(elements[1]);
-                        final TrackingAimAccuracy accuracy = TrackingAimAccuracy.parse(elements[2]);
-                        final TrackingAimDamageEff damageEff = TrackingAimDamageEff.parse(elements[3]);
-                        final TrackingAimRound round = TrackingAimRound.of(score, accuracy, damageEff);
-
-                        final TrackingAimRecordDate date = TrackingAimRecordDate.parse(elements[0]);
-                        final List<TrackingAimRound> rounds = records.computeIfAbsent(date, key -> new ArrayList<>());
-
-                        rounds.add(round);
-                    });
-
-            this.cache.clear();
-            records.forEach((date, rounds) -> {
-                this.cache.add(TrackingAimRecord.of(date, rounds));
-            });
-            
-            this.cache.sort(Comparator.comparing(TrackingAimRecord::date));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        final Map<TrackingAimRecordDate, List<TrackingAimRound>> records = new HashMap<>();
+        for (TrackingAimRound round : csv.load()) {
+            final List<TrackingAimRound> rounds = records.computeIfAbsent(round.date(), key -> new ArrayList<>());
+            rounds.add(round);
         }
+
+        cache.clear();
+        
+        records.values().forEach(rounds -> cache.add(TrackingAimRecord.of(rounds)));
+        
+        cache.sort(Comparator.comparing(TrackingAimRecord::date));
     }
 
     private void save() {
-        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (TrackingAimRecord records : cache) {
-                final TrackingAimRecordDate date = records.date();
-                for (TrackingAimRound round : records.rounds()) {
-                    writer.write(toCsvRecord(date, round) + "\n");
-                }
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        final List<TrackingAimRound> rounds = cache.stream()
+                .flatMap(record -> record.rounds().stream())
+                .collect(Collectors.toList());
+        
+        csv.write(rounds);
     }
 
-    private String toCsvRecord(TrackingAimRecordDate date, TrackingAimRound round) {
-        List<String> elements = List.of(
-                date.value().toString(),
-                String.valueOf(round.score().value()),
-                String.valueOf(round.accuracy().value()),
-                String.valueOf(round.damageEff().value())
+    private List<String> format(TrackingAimRound round) {
+        return List.of(
+            round.date().value().toString(),
+            String.valueOf(round.score().value()),
+            String.valueOf(round.accuracy().value()),
+            String.valueOf(round.damageEff().value())
         );
-        return String.join(",", elements);
+    }
+    
+    private TrackingAimRound parse(List<String> elements) {
+        final TrackingAimRecordDate date = TrackingAimRecordDate.parse(elements.get(0));
+        final TrackingAimScore score = TrackingAimScore.parse(elements.get(1));
+        final TrackingAimAccuracy accuracy = TrackingAimAccuracy.parse(elements.get(2));
+        final TrackingAimDamageEff damageEff = TrackingAimDamageEff.parse(elements.get(3));
+        return TrackingAimRound.of(date, score, accuracy, damageEff);
     }
 }

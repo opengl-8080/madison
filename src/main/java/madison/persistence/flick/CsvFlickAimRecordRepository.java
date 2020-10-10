@@ -6,27 +6,26 @@ import madison.domain.flick.FlickAimRecordDate;
 import madison.domain.flick.FlickAimRecordRepository;
 import madison.domain.flick.FlickAimRound;
 import madison.domain.flick.FlickAimScore;
+import madison.trial.csv.CsvFile;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
-    private final Path file;
+    private final CsvFile<FlickAimRound> csv;
     private final List<FlickAimRecord> cache = new ArrayList<>();
 
     public CsvFlickAimRecordRepository(Path file) {
-        this.file = Objects.requireNonNull(file);
+        csv = CsvFile.<FlickAimRound>builder(file)
+                    .delimiter("\t")
+                    .formatter(this::format)
+                    .parser(this::parse)
+                    .build();
         load();
     }
 
@@ -42,48 +41,30 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
     }
 
     private void load() {
-        if (!(Files.exists(file) && Files.isRegularFile(file))) {
+        if (!csv.exists()) {
             return;
         }
         
-        try {
-            final Map<FlickAimRecordDate, List<FlickAimRound>> records = new HashMap<>();
-            Files.lines(file, StandardCharsets.UTF_8)
-                .forEach(line -> {
-                    final String[] elements = line.split(",");
-                    
-                    final FlickAimScore score = FlickAimScore.parse(elements[1]);
-                    final FlickAimAccuracy accuracy = FlickAimAccuracy.parse(elements[2]);
-                    final FlickAimRound round = FlickAimRound.of(score, accuracy);
-                    
-                    final FlickAimRecordDate date = FlickAimRecordDate.parse(elements[0]);
-                    final List<FlickAimRound> rounds = records.computeIfAbsent(date, key -> new ArrayList<>());
-                    
-                    rounds.add(round);
-                });
+        final Map<FlickAimRecordDate, List<FlickAimRound>> records = new HashMap<>();
 
-            this.cache.clear();
-            records.forEach((date, rounds) -> {
-                this.cache.add(FlickAimRecord.of(date, rounds));
-            });
-
-            this.cache.sort(Comparator.comparing(FlickAimRecord::date));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        for (FlickAimRound round : csv.load()) {
+            final List<FlickAimRound> rounds = records.computeIfAbsent(round.date(), key -> new ArrayList<>());
+            rounds.add(round);
         }
+        
+        this.cache.clear();
+        
+        records.values().forEach(rounds -> this.cache.add(FlickAimRecord.of(rounds)));
+
+        this.cache.sort(Comparator.comparing(FlickAimRecord::date));
     }
     
     private void save() {
-        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (FlickAimRecord records : cache) {
-                final FlickAimRecordDate date = records.date();
-                for (FlickAimRound round : records.rounds()) {
-                    writer.write(toCsvRecord(date, round) + "\n");
-                }
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        final List<FlickAimRound> rounds = cache.stream()
+                .flatMap(record -> record.rounds().stream())
+                .collect(Collectors.toList());
+        
+        csv.write(rounds);
     }
     
     private String toCsvRecord(FlickAimRecordDate date, FlickAimRound round) {
@@ -93,5 +74,20 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
             String.valueOf(round.accuracy().value())
         );
         return String.join(",", elements);
+    }
+    
+    private List<String> format(FlickAimRound round) {
+        return List.of(
+            round.date().value().toString(),
+            String.valueOf(round.score().value()),
+            String.valueOf(round.accuracy().value())
+        );
+    }
+    
+    private FlickAimRound parse(List<String> elements) {
+        final FlickAimRecordDate date = FlickAimRecordDate.parse(elements.get(0));
+        final FlickAimScore score = FlickAimScore.parse(elements.get(1));
+        final FlickAimAccuracy accuracy = FlickAimAccuracy.parse(elements.get(2));
+        return FlickAimRound.of(date, score, accuracy);
     }
 }

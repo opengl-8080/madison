@@ -12,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import madison.domain.flick.FlickAimRecord;
-import madison.domain.flick.FlickAimRecordDate;
 import madison.domain.flick.FlickAimRecordRepository;
 import madison.domain.flick.FlickAimRound;
 import madison.trial.Dialog;
@@ -58,9 +57,8 @@ public class RegisterFlickAimRecordController implements Initializable, Initiali
             return;
         }
 
-        final FlickAimRecordDate date = FlickAimRecordDate.now();
         final List<FlickAimRound> rounds = formControllers.stream().map(FlickAimRoundFormController::getFlickAimRound).collect(Collectors.toList());
-        final FlickAimRecord record = FlickAimRecord.of(date, rounds);
+        final FlickAimRecord record = FlickAimRecord.of(rounds);
 
         final FlickAimRecordRepository repository = ObjectContainer.getInstance().get(FlickAimRecordRepository.class);
         repository.register(record);

@@ -20,11 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
     private final Path file;
-    private final Map<FlickAimRecordDate, FlickAimRecord> cache = new HashMap<>();
+    private final List<FlickAimRecord> cache = new ArrayList<>();
 
     public CsvFlickAimRecordRepository(Path file) {
         this.file = Objects.requireNonNull(file);
@@ -33,16 +32,13 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
 
     @Override
     public void register(FlickAimRecord record) {
-        cache.put(record.date(), record);
+        cache.add(record);
         save();
     }
 
     @Override
     public List<FlickAimRecord> findAllOrderByDate() {
-        return cache.values()
-                .stream()
-                .sorted(Comparator.comparing(FlickAimRecord::date))
-                .collect(Collectors.toList());
+        return List.copyOf(cache);
     }
 
     private void load() {
@@ -68,8 +64,10 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
 
             this.cache.clear();
             records.forEach((date, rounds) -> {
-                this.cache.put(date, FlickAimRecord.of(date, rounds));
+                this.cache.add(FlickAimRecord.of(date, rounds));
             });
+
+            this.cache.sort(Comparator.comparing(FlickAimRecord::date));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -77,7 +75,7 @@ public class CsvFlickAimRecordRepository implements FlickAimRecordRepository {
     
     private void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (FlickAimRecord records : cache.values()) {
+            for (FlickAimRecord records : cache) {
                 final FlickAimRecordDate date = records.date();
                 for (FlickAimRound round : records.rounds()) {
                     writer.write(toCsvRecord(date, round) + "\n");

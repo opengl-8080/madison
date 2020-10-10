@@ -21,11 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class CsvTrackingAimRecordRepository implements TrackingAimRecordRepository {
     private final Path file;
-    private final Map<TrackingAimRecordDate, TrackingAimRecord> cache = new HashMap<>();
+    private final List<TrackingAimRecord> cache = new ArrayList<>();
 
     public CsvTrackingAimRecordRepository(Path file) {
         this.file = Objects.requireNonNull(file);
@@ -34,16 +33,13 @@ public class CsvTrackingAimRecordRepository implements TrackingAimRecordReposito
 
     @Override
     public void register(TrackingAimRecord record) {
-        cache.put(record.date(), record);
+        cache.add(record);
         save();
     }
 
     @Override
     public List<TrackingAimRecord> findAllOrderByDate() {
-        return cache.values()
-                .stream()
-                .sorted(Comparator.comparing(TrackingAimRecord::date))
-                .collect(Collectors.toList());
+        return List.copyOf(cache);
     }
 
     private void load() {
@@ -70,8 +66,10 @@ public class CsvTrackingAimRecordRepository implements TrackingAimRecordReposito
 
             this.cache.clear();
             records.forEach((date, rounds) -> {
-                this.cache.put(date, TrackingAimRecord.of(date, rounds));
+                this.cache.add(TrackingAimRecord.of(date, rounds));
             });
+            
+            this.cache.sort(Comparator.comparing(TrackingAimRecord::date));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -79,7 +77,7 @@ public class CsvTrackingAimRecordRepository implements TrackingAimRecordReposito
 
     private void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for (TrackingAimRecord records : cache.values()) {
+            for (TrackingAimRecord records : cache) {
                 final TrackingAimRecordDate date = records.date();
                 for (TrackingAimRound round : records.rounds()) {
                     writer.write(toCsvRecord(date, round) + "\n");

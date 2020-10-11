@@ -1,6 +1,6 @@
 package madison.domain.tracking;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 
 import java.util.Objects;
 

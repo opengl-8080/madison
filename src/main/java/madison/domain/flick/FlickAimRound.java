@@ -1,6 +1,6 @@
 package madison.domain.flick;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 
 import java.util.Objects;
 

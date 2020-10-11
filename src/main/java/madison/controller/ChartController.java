@@ -1,6 +1,8 @@
 package madison.controller;
 
 import gl.javafx.FxmlPath;
+import gl.javafx.control.ChartSeriesSetupHelper;
+import gl.util.ObjectContainer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
@@ -10,8 +12,6 @@ import madison.domain.flick.statistic.FlickAimStatistic;
 import madison.domain.tracking.TrackingAimRecord;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.statistic.TrackingAimStatistic;
-import madison.trial.chart.ChartSeriesSetupHelper;
-import madison.util.ObjectContainer;
 
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -3,6 +3,8 @@ package madison.controller;
 import gl.javafx.Fxml;
 import gl.javafx.FxmlPath;
 import gl.javafx.InitializeStage;
+import gl.javafx.control.Dialog;
+import gl.util.ObjectContainer;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
@@ -15,8 +17,6 @@ import madison.domain.tracking.TrackingAimRecord;
 import madison.domain.tracking.TrackingAimRecordDate;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.TrackingAimRound;
-import madison.trial.Dialog;
-import madison.util.ObjectContainer;
 
 import java.net.URL;
 import java.util.ArrayList;

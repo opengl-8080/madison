@@ -1,6 +1,6 @@
 package madison.domain.tracking;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 import madison.domain.tracking.statistic.TrackingAimMedianRound;
 import madison.domain.tracking.statistic.TrackingAimStatistic;
 import madison.domain.tracking.statistic.TrackingAimTotalScore;

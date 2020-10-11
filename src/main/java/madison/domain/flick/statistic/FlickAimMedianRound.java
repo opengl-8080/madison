@@ -1,6 +1,6 @@
 package madison.domain.flick.statistic;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 import madison.domain.flick.FlickAimRound;
 
 import java.util.Objects;

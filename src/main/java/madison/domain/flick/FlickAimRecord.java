@@ -1,6 +1,6 @@
 package madison.domain.flick;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 import madison.domain.flick.statistic.FlickAimMedianRound;
 import madison.domain.flick.statistic.FlickAimStatistic;
 import madison.domain.flick.statistic.FlickAimTotalScore;

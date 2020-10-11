@@ -1,12 +1,12 @@
 package madison.persistence.flick;
 
+import gl.file.csv.CsvFile;
 import madison.domain.flick.FlickAimAccuracy;
 import madison.domain.flick.FlickAimRecord;
 import madison.domain.flick.FlickAimRecordDate;
 import madison.domain.flick.FlickAimRecordRepository;
 import madison.domain.flick.FlickAimRound;
 import madison.domain.flick.FlickAimScore;
-import madison.trial.csv.CsvFile;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

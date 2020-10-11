@@ -1,6 +1,6 @@
 package madison.domain.tracking.statistic;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 import madison.domain.tracking.TrackingAimRecordDate;
 
 import java.util.Objects;

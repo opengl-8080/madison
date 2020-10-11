@@ -1,6 +1,6 @@
 package madison.domain.flick;
 
-import madison.domain.ValueObject;
+import gl.util.annotation.ValueObject;
 
 import java.time.LocalDate;
 import java.util.Objects;

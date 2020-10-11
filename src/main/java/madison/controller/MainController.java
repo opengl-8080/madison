@@ -4,6 +4,8 @@ import gl.javafx.FxWindow;
 import gl.javafx.Fxml;
 import gl.javafx.FxmlPath;
 import gl.javafx.InitializeStage;
+import gl.javafx.control.TableViewUtil;
+import gl.util.ObjectContainer;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,8 +22,6 @@ import madison.domain.flick.statistic.FlickAimStatistic;
 import madison.domain.tracking.TrackingAimRecord;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.statistic.TrackingAimStatistic;
-import madison.trial.TableViewUtil;
-import madison.util.ObjectContainer;
 
 import java.net.URL;
 import java.util.ArrayList;

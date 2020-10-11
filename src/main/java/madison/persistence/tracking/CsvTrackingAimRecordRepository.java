@@ -1,5 +1,6 @@
 package madison.persistence.tracking;
 
+import gl.file.csv.CsvFile;
 import madison.domain.tracking.TrackingAimAccuracy;
 import madison.domain.tracking.TrackingAimDamageEff;
 import madison.domain.tracking.TrackingAimRecord;
@@ -7,7 +8,6 @@ import madison.domain.tracking.TrackingAimRecordDate;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.TrackingAimRound;
 import madison.domain.tracking.TrackingAimScore;
-import madison.trial.csv.CsvFile;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

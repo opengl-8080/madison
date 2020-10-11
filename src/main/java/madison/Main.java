@@ -2,6 +2,7 @@ package madison;
 
 import gl.javafx.FxWindow;
 import gl.javafx.Fxml;
+import gl.util.ObjectContainer;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -11,7 +12,6 @@ import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.persistence.flick.CsvFlickAimRecordRepository;
 import madison.persistence.tracking.CsvTrackingAimRecordRepository;
 import madison.util.MadisonHome;
-import madison.util.ObjectContainer;
 
 public class Main extends Application {
     

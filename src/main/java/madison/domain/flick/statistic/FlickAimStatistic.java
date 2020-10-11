@@ -1,8 +1,7 @@
 package madison.domain.flick.statistic;
 
-import madison.domain.Entity;
+import gl.util.annotation.Entity;
 import madison.domain.flick.FlickAimRecordDate;
-import madison.domain.flick.FlickAimScore;
 
 import java.util.Objects;
 

@@ -4,13 +4,13 @@ import gl.javafx.FxmlPath;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import madison.domain.flick.FlickAimRecord;
 import madison.domain.flick.FlickAimRecordRepository;
 import madison.domain.flick.statistic.FlickAimStatistic;
 import madison.domain.tracking.TrackingAimRecord;
 import madison.domain.tracking.TrackingAimRecordRepository;
 import madison.domain.tracking.statistic.TrackingAimStatistic;
+import madison.trial.chart.ChartSeriesSetupHelper;
 import madison.util.ObjectContainer;
 
 import java.net.URL;
@@ -37,56 +37,38 @@ public class ChartController implements Initializable {
     private void setupFlickAimChart() {
         final FlickAimRecordRepository repository = ObjectContainer.getInstance().get(FlickAimRecordRepository.class);
 
-        final XYChart.Series<String, Double> medianSeries = new XYChart.Series<>();
-        final XYChart.Series<String, Double> totalScoreSeries = new XYChart.Series<>();
-
-        medianSeries.setName("flick aim median score");
-        totalScoreSeries.setName("flick aim total score");
+        ChartSeriesSetupHelper<String, Double> medianChartHelper = new ChartSeriesSetupHelper<>(flickAimMedianChart);
+        ChartSeriesSetupHelper<String, Double> totalScoreChartHelper = new ChartSeriesSetupHelper<>(flickAimTotalScoreChart);
+        
         for (FlickAimRecord record : repository.findAllOrderByDate()) {
             final FlickAimStatistic statistic = record.calculateStatistic();
 
-            XYChart.Data<String, Double> medianSeriesData = new XYChart.Data<>(
-                statistic.date().value().toString(),
-                statistic.medianRound().value().score().value()
-            );
-            medianSeries.getData().add(medianSeriesData);
-
-            XYChart.Data<String, Double> totalSeriesData = new XYChart.Data<>(
-                statistic.date().value().toString(),
-                statistic.totalScore().value()
-            );
-            totalScoreSeries.getData().add(totalSeriesData);
+            medianChartHelper.addData("flick aim median score",
+                    statistic.date().value().toString(),
+                    statistic.medianRound().value().score().value());
+            
+            totalScoreChartHelper.addData("flick aim total score",
+                    statistic.date().value().toString(),
+                    statistic.totalScore().value());
         }
-
-        flickAimMedianChart.getData().add(medianSeries);
-        flickAimTotalScoreChart.getData().add(totalScoreSeries);
     }
 
     private void setupTrackingAimChart() {
         final TrackingAimRecordRepository repository = ObjectContainer.getInstance().get(TrackingAimRecordRepository.class);
 
-        final XYChart.Series<String, Double> medianSeries = new XYChart.Series<>();
-        final XYChart.Series<String, Double> totalScoreSeries = new XYChart.Series<>();
+        ChartSeriesSetupHelper<String, Double> medianChartHelper = new ChartSeriesSetupHelper<>(trackingAimMedianChart);
+        ChartSeriesSetupHelper<String, Double> totalScoreChartHelper = new ChartSeriesSetupHelper<>(trackingAimTotalScoreChart);
 
-        medianSeries.setName("tracking aim median score");
-        totalScoreSeries.setName("tracking aim total score");
         for (TrackingAimRecord record : repository.findAllOrderByDate()) {
             final TrackingAimStatistic statistic = record.calculateStatistic();
 
-            XYChart.Data<String, Double> medianSeriesData = new XYChart.Data<>(
+            medianChartHelper.addData("tracking aim median score",
                     statistic.date().value().toString(),
-                    statistic.medianRound().value().score().value()
-            );
-            medianSeries.getData().add(medianSeriesData);
+                    statistic.medianRound().value().score().value());
 
-            XYChart.Data<String, Double> totalSeriesData = new XYChart.Data<>(
+            totalScoreChartHelper.addData("tracking aim total score",
                     statistic.date().value().toString(),
-                    statistic.totalScore().value()
-            );
-            totalScoreSeries.getData().add(totalSeriesData);
+                    statistic.totalScore().value());
         }
-
-        trackingAimMedianChart.getData().add(medianSeries);
-        trackingAimTotalScoreChart.getData().add(totalScoreSeries);
     }
 }

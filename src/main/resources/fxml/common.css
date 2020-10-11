@@ -31,3 +31,13 @@
     -fx-font-size: 15pt;
     -fx-font-weight: bold;
 }
+
+.flick-aim-median-chart .default-color0.chart-series-line,
+.flick-aim-total-score-chart .default-color0.chart-series-line {
+    -fx-stroke: blue;
+}
+
+.flick-aim-median-chart .default-color0.chart-line-symbol,
+.flick-aim-total-score-chart .default-color0.chart-line-symbol{
+    -fx-background-color: blue, white;
+}

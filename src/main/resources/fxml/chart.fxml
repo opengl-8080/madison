@@ -10,7 +10,7 @@
    <children>
       <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <LineChart fx:id="flickAimMedianChart" createSymbols="false" title="Flick Aim (Median)">
+            <LineChart fx:id="flickAimMedianChart" createSymbols="false" styleClass="flick-aim-median-chart" title="Flick Aim (Median)">
               <xAxis>
                 <CategoryAxis label="date" side="BOTTOM" />
               </xAxis>
@@ -18,7 +18,7 @@
                 <NumberAxis fx:id="flickAimMedianYAxis" label="score" side="LEFT" />
               </yAxis>
             </LineChart>
-            <LineChart fx:id="flickAimTotalScoreChart" createSymbols="false" title="Flick Aim (Total)">
+            <LineChart fx:id="flickAimTotalScoreChart" createSymbols="false" styleClass="flick-aim-total-score-chart" title="Flick Aim (Total)">
               <xAxis>
                 <CategoryAxis label="date" side="BOTTOM" />
               </xAxis>

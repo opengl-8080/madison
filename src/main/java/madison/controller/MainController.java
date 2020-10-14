@@ -143,8 +143,7 @@ public class MainController implements InitializeStage, Initializable {
         Fxml<RegisterFlickAimRecordController, Parent> fxml = Fxml.load(RegisterFlickAimRecordController.class);
         FxWindow.newWindow(fxml)
                 .title("Register Flick Aim Record")
-                .modality(stage, Modality.WINDOW_MODAL)
-                .resizable(false)
+                .resizable(true)
                 .showAndWait();
         
         refreshFlickAimRecordTable();
@@ -155,8 +154,7 @@ public class MainController implements InitializeStage, Initializable {
         Fxml<RegisterTrackingAimRecordController, Parent> fxml = Fxml.load(RegisterTrackingAimRecordController.class);
         FxWindow.newWindow(fxml)
                 .title("Register Tracking Aim Record")
-                .modality(stage, Modality.WINDOW_MODAL)
-                .resizable(false)
+                .resizable(true)
                 .showAndWait();
 
         refreshTrackingAimRecordTable();
